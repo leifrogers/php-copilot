@@ -1,0 +1,186 @@
+name: PHP Copilot Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        php-version: [8.1, 8.2, 8.3]
+    
+    name: Validate Project (PHP ${{ matrix.php-version }})
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: json, mbstring
+        ini-values: error_reporting=E_ALL
+        tools: composer
+        
+    - name: Validate project structure
+      run: |
+        echo "🔍 Checking project structure..."
+        test -d chatmodes || (echo "❌ Missing chatmodes directory" && exit 1)
+        test -d instructions || (echo "❌ Missing instructions directory" && exit 1)
+        test -d prompts || (echo "❌ Missing prompts directory" && exit 1)
+        test -d scripts || (echo "❌ Missing scripts directory" && exit 1)
+        test -f README.md || (echo "❌ Missing README.md" && exit 1)
+        test -f LICENSE || (echo "❌ Missing LICENSE" && exit 1)
+        echo "✅ Project structure validated"
+        
+    - name: Run PHP validation script
+      run: |
+        echo "🧪 Running validation script..."
+        php scripts/validate.php $(pwd)
+        
+    - name: Validate PHP syntax in examples
+      run: |
+        echo "🔍 Validating PHP syntax in examples..."
+        find examples -name "*.php" -exec php -l {} \; | grep -v "No syntax errors" && exit 1 || echo "✅ All PHP files are syntactically valid"
+        
+    - name: Check for consistent file naming
+      run: |
+        echo "📝 Checking file naming conventions..."
+        # Check that prompt files follow naming convention
+        find prompts -name "*.md" ! -name "*.prompt.md" | grep . && echo "❌ Found prompt files not following .prompt.md convention" && exit 1 || echo "✅ Prompt files follow naming convention"
+        # Check that chatmode files follow naming convention  
+        find chatmodes -name "*.md" ! -name "*.chatmode.md" | grep . && echo "❌ Found chatmode files not following .chatmode.md convention" && exit 1 || echo "✅ Chatmode files follow naming convention"
+        # Check that instruction files follow naming convention
+        find instructions -name "*.md" ! -name "*.instructions.md" | grep . && echo "❌ Found instruction files not following .instructions.md convention" && exit 1 || echo "✅ Instruction files follow naming convention"
+        
+    - name: Validate markdown syntax
+      uses: DavidAnson/markdownlint-cli2-action@v16
+      with:
+        globs: |
+          **/*.md
+          !**/node_modules/**
+        config: |
+          {
+            "MD013": false,
+            "MD033": false,
+            "MD041": false
+          }
+          
+    - name: Check for YAML frontmatter in chatmodes
+      run: |
+        echo "📋 Validating YAML frontmatter in chatmodes..."
+        for file in chatmodes/*.chatmode.md; do
+          if ! head -n 1 "$file" | grep -q "^---$"; then
+            echo "❌ Missing YAML frontmatter in $file"
+            exit 1
+          fi
+        done
+        echo "✅ All chatmode files have proper YAML frontmatter"
+        
+    - name: Check for YAML frontmatter in instructions
+      run: |
+        echo "📋 Validating YAML frontmatter in instructions..."
+        for file in instructions/*.instructions.md; do
+          if ! head -n 1 "$file" | grep -q "^---$"; then
+            echo "❌ Missing YAML frontmatter in $file"
+            exit 1
+          fi
+        done
+        echo "✅ All instruction files have proper YAML frontmatter"
+        
+    - name: Validate documentation completeness
+      run: |
+        echo "📖 Checking documentation completeness..."
+        
+        # Check README sections
+        grep -q "# PHP Copilot" README.md || (echo "❌ Missing main heading in README" && exit 1)
+        grep -q "## Installation" README.md || (echo "❌ Missing Installation section in README" && exit 1)
+        grep -q "## Usage" README.md || (echo "❌ Missing Usage section in README" && exit 1)
+        grep -q "## Features" README.md || (echo "❌ Missing Features section in README" && exit 1)
+        
+        # Check that each directory has a README
+        test -f examples/README.md || (echo "❌ Missing README in examples directory" && exit 1)
+        test -f templates/README.md || (echo "❌ Missing README in templates directory" && exit 1)
+        
+        echo "✅ Documentation completeness validated"
+        
+    - name: Generate validation report
+      if: always()
+      run: |
+        echo "📊 Generating detailed validation report..."
+        {
+          echo "# PHP Copilot Validation Report"
+          echo "**Generated:** $(date)"
+          echo "**PHP Version:** ${{ matrix.php-version }}"
+          echo "**Commit:** ${{ github.sha }}"
+          echo ""
+          echo "## File Counts"
+          echo "- Prompts: $(find prompts -name "*.prompt.md" | wc -l)"
+          echo "- Chatmodes: $(find chatmodes -name "*.chatmode.md" | wc -l)"
+          echo "- Instructions: $(find instructions -name "*.instructions.md" | wc -l)"
+          echo "- Examples: $(find examples -name "*.php" | wc -l)"
+          echo "- Templates: $(find templates -name "*.php" -o -name "*.yml" -o -name "*.yaml" -o -name "*.json" | wc -l)"
+          echo ""
+          echo "## Validation Results"
+          php scripts/validate.php $(pwd) 2>&1 || true
+        } > validation-report-php${{ matrix.php-version }}.md
+        
+    - name: Upload validation report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: validation-report-php${{ matrix.php-version }}
+        path: validation-report-php${{ matrix.php-version }}.md
+        retention-days: 30
+
+  documentation-check:
+    runs-on: ubuntu-latest
+    name: Documentation Quality Check
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check for broken links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: yes
+        use-verbose-mode: no
+        config-file: .github/mlc_config.json
+        
+    - name: Spell check
+      uses: streetsidesoftware/cspell-action@v6
+      with:
+        files: "**/*.md"
+        config: .github/cspell.json
+        
+  security-scan:
+    runs-on: ubuntu-latest
+    name: Security Scan
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
