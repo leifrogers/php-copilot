@@ -1,16 +1,3 @@
----
-post_title: "PHP Copilot Expert - GitHub Copilot Configuration for PHP Development"
-author1: "Leif Rogers"
-post_slug: "php-copilot-expert"
-microsoft_alias: ""
-featured_image: ""
-categories: ["Development Tools", "PHP"]
-tags: ["GitHub Copilot", "PHP", "Development", "Security", "Laravel", "Symfony", "Prompt Engineering"]
-ai_note: "This documentation was enhanced with AI assistance"
-summary: "A comprehensive GitHub Copilot configuration that transforms your coding assistant into a Senior PHP Architect and Security Specialist"
-post_date: "2025-07-04"
----
-
 # PHP Copilot Expert
 
 A comprehensive GitHub Copilot configuration for PHP development, providing expert-level guidance for modern PHP applications with security, performance, and best practices built-in.
