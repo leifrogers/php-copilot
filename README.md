@@ -139,6 +139,7 @@ The PHP Expert is designed to be your senior colleague in the codebase. It will:
 - Generate production-ready code with proper error handling
 - Create comprehensive tests for your classes
 ## Project Structure
+```text
 php-copilot/
 ├── chatmodes/
 │   ├── API-Expert.chatmode.md            # API development specialist
