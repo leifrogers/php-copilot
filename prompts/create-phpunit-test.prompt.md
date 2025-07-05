@@ -1,3 +1,9 @@
+---
+mode: "agent"
+tools: ['codebase', 'editFiles', 'usages', 'memory']
+description: "Generate a PHPUnit test case for a given PHP class."
+---
+
 ## Task: Generate a PHPUnit Test Case
 You will act as an expert Test-Driven Development (TDD) engineer. Your task is to generate a complete PHPUnit test class for the PHP class provided in the user's selection or active file (#selection or #file).
 

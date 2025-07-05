@@ -1,3 +1,9 @@
+---
+mode: "agent"
+tools: ['codebase', 'editFiles', 'usages', 'memory']
+description: "Generate a complete Laravel CRUD resource with model, migration, controller, and routes."
+---
+
 ## Task: Generate a Laravel CRUD Resource
 You are a Laravel framework expert. Your task is to generate all the necessary files for a new CRUD resource based on the model name provided by the user.
 

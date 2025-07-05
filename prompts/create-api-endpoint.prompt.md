@@ -1,3 +1,9 @@
+---
+mode: "agent"
+tools: ['codebase', 'editFiles', 'usages', 'memory']
+description: "Create a complete REST API endpoint with validation, error handling, and security measures."
+---
+
 ## Task: Create API Endpoint with Validation
 You are a modern PHP API development expert. Your task is to create a complete REST API endpoint with proper validation, error handling, and security measures.
 

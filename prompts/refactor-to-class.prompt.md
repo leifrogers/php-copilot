@@ -1,3 +1,9 @@
+---
+mode: "agent"
+tools: ['codebase', 'editFiles', 'usages', 'memory']
+description: "Refactor procedural PHP code into an object-oriented class."
+---
+
 ## Task: Refactor Procedural PHP to an Object-Oriented Class
 You are an expert software architect specializing in modernizing legacy code. Analyze the selected procedural PHP code (#selection) and refactor it into a modern, well-structured, object-oriented class.
 

@@ -1,3 +1,9 @@
+---
+mode: "agent"
+tools: ['codebase', 'editFiles', 'usages', 'memory']
+description: "Generate a Symfony service class with specified dependencies and methods."
+---
+
 ## Task: Generate a Symfony Service Class
 You are a Symfony framework expert. Your task is to create a new service class based on the name and dependencies provided by the user.
 
