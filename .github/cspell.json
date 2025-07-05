@@ -2,6 +2,7 @@
     "version": "0.2",
     "language": "en",
     "words": [
+        "Liskov",
         "PHPUnit",
         "Laravel",
         "Symfony",
@@ -74,7 +75,14 @@
         "templating",
         "instantiation",
         "parameterized",
-        "serialization"
+        "serialization",
+        "autoloading",
+        "Blackfire",
+        "Nullsafe",
+        "namespacing",
+        "Autoloading",
+        "autoloading",
+        "unparameterized"
     ],
     "dictionaries": [
         "php",

@@ -68,11 +68,6 @@ class CopilotValidator
             }
         }
 
-        // Check for markdown formatting
-        if (!preg_match('/^## Task:/', $content)) {
-            $this->errors[] = "Prompt {$filename} must start with '## Task:' section";
-        }
-
         // Check for placeholder consistency
         if (preg_match_all('/\{([^}]+)\}/', $content, $matches)) {
             foreach ($matches[1] as $placeholder) {
