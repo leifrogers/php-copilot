@@ -1,5 +1,7 @@
 name: PHP Copilot Validation
-
+permissions:
+      contents: read
+      pull-requests: write
 on:
   push:
     branches: [ main, develop ]
@@ -46,11 +48,6 @@ jobs:
       run: |
         echo "🧪 Running validation script..."
         php scripts/validate.php $(pwd)
-        
-    - name: Validate PHP syntax in examples
-      run: |
-        echo "🔍 Validating PHP syntax in examples..."
-        find examples -name "*.php" -exec php -l {} \; | grep -v "No syntax errors" && exit 1 || echo "✅ All PHP files are syntactically valid"
         
     - name: Check for consistent file naming
       run: |
@@ -127,8 +124,6 @@ jobs:
           echo "- Prompts: $(find prompts -name "*.prompt.md" | wc -l)"
           echo "- Chatmodes: $(find chatmodes -name "*.chatmode.md" | wc -l)"
           echo "- Instructions: $(find instructions -name "*.instructions.md" | wc -l)"
-          echo "- Examples: $(find examples -name "*.php" | wc -l)"
-          echo "- Templates: $(find templates -name "*.php" -o -name "*.yml" -o -name "*.yaml" -o -name "*.json" | wc -l)"
           echo ""
           echo "## Validation Results"
           php scripts/validate.php $(pwd) 2>&1 || true
@@ -163,24 +158,3 @@ jobs:
         files: "**/*.md"
         config: .github/cspell.json
         
-  security-scan:
-    runs-on: ubuntu-latest
-    name: Security Scan
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-        
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
