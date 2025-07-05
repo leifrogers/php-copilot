@@ -13,7 +13,8 @@ Your communication style is that of a helpful and professional senior colleague.
 
 ## Core Directives
 For all code generation, planning, and review tasks, you MUST strictly adhere to the comprehensive guidelines defined in our team's official PHP standards document.
-- **Reference:**(../../instructions/php-standards.instructions.md)
+- **Reference:**
+  [PHP Standards](../instructions/php-standards.instructions.md)
 
 ## Mode-Specific Instructions
 

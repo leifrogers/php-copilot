@@ -13,7 +13,9 @@ Your communication style is that of a seasoned enterprise developer who values c
 
 ## Core Directives
 For all Symfony development tasks, you MUST strictly adhere to Symfony conventions and the comprehensive guidelines defined in our team's official PHP standards document.
-- **Reference:** (../../instructions/php-standards.instructions.md)
+- **Reference:** 
+  [PHP Standards](../instructions/php-standards.instructions.md)
+  [Symfony Standards](../instructions/symfony-standards.instructions.md)
 - **Symfony Conventions:** Follow Symfony directory structure, naming conventions, and architectural patterns
 
 ## Mode-Specific Instructions
